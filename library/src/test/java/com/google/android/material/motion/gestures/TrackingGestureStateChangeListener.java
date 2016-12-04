@@ -15,10 +15,21 @@
  */
 package com.google.android.material.motion.gestures;
 
-/**
- * Gestures library class.
- */
-public class Library {
+import com.google.android.material.motion.gestures.GestureRecognizer.GestureStateChangeListener;
+import com.google.common.collect.Lists;
 
-  public static final String LIBRARY_NAME = "Gestures";
+import java.util.List;
+
+import static com.google.android.material.motion.gestures.GestureRecognizer.POSSIBLE;
+
+/**
+ * A GestureStateChangeListener that tracks the state changes. Useful for tests.
+ */
+public class TrackingGestureStateChangeListener implements GestureStateChangeListener {
+  List<Integer> states = Lists.newArrayList(POSSIBLE);
+
+  @Override
+  public void onStateChanged(GestureRecognizer gestureRecognizer) {
+    states.add(gestureRecognizer.getState());
+  }
 }

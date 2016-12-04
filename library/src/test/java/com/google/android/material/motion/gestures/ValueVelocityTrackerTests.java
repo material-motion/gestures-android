@@ -15,23 +15,32 @@
  */
 package com.google.android.material.motion.gestures;
 
+import android.app.Activity;
+import android.content.Context;
+import android.view.MotionEvent;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class UnitTests {
+public class ValueVelocityTrackerTests {
+
+  private ValueVelocityTracker velocityTracker;
 
   @Before
   public void setUp() {
-
+    Context context = Robolectric.setupActivity(Activity.class);
+    velocityTracker = new ValueVelocityTracker(context, ValueVelocityTracker.ADDITIVE);
   }
 
-  @Test
-  public void unitTest() {
-
+  @Test(expected = IllegalArgumentException.class)
+  public void unexpectedMotionActionCrashes() {
+    velocityTracker.onGestureStart(
+      MotionEvent.obtain(0, 0, MotionEvent.ACTION_BUTTON_PRESS, 0, 0, 0), 0);
   }
 }

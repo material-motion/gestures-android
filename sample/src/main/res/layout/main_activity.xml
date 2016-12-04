@@ -14,12 +14,33 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <View
+    android:id="@+id/target"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_margin="20dp"
+    android:background="#ff0000"/>
+
   <TextView
-    android:id="@+id/text"
+    android:id="@+id/drag_text"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Hello, World!"/>
-</FrameLayout>
+    android:text="Drag\n"/>
+
+  <TextView
+    android:id="@+id/scale_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Scale\n"/>
+
+  <TextView
+    android:id="@+id/rotate_text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Rotate\n"/>
+</LinearLayout>
