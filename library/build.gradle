@@ -36,6 +36,7 @@ android {
 
 dependencies {
   // If you are developing any dependencies locally, also list them in local.dependencies.
+  compile 'com.android.support:support-compat:24.2.1'
 
   testCompile 'com.google.truth:truth:0.28'
   testCompile 'junit:junit:4.12'
