@@ -54,10 +54,9 @@ public class ScaleGestureRecognizer extends GestureRecognizer {
 
     if (scaleSlop == UNSET_SLOP) {
       Context context = element.getContext();
-      this.scaleSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+      scaleSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+      spanVelocityTracker = new ValueVelocityTracker(element.getContext(), MULTIPLICATIVE);
     }
-
-    spanVelocityTracker = new ValueVelocityTracker(element.getContext(), MULTIPLICATIVE);
   }
 
   public boolean onTouchEvent(MotionEvent event) {

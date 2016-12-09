@@ -53,11 +53,10 @@ public class DragGestureRecognizer extends GestureRecognizer {
 
     if (dragSlop == UNSET_SLOP) {
       Context context = element.getContext();
-      this.dragSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+      dragSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+      centroidXVelocityTracker = new ValueVelocityTracker(element.getContext(), ADDITIVE);
+      centroidYVelocityTracker = new ValueVelocityTracker(element.getContext(), ADDITIVE);
     }
-
-    centroidXVelocityTracker = new ValueVelocityTracker(element.getContext(), ADDITIVE);
-    centroidYVelocityTracker = new ValueVelocityTracker(element.getContext(), ADDITIVE);
   }
 
   public boolean onTouchEvent(MotionEvent event) {

@@ -359,6 +359,18 @@ public class RotateGestureRecognizerTests {
     assertThat(rotateGestureRecognizer.getVelocity()).isGreaterThan(0f);
   }
 
+  @Test(expected = NullPointerException.class)
+  public void crashesForNullElement() {
+    rotateGestureRecognizer.setElement(null);
+    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
+  @Test
+  public void allowsSettingElementAgain() {
+    rotateGestureRecognizer.setElement(new View(element.getContext()));
+    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
   private MotionEvent createMotionEvent(int action, float x, float y) {
     return MotionEvent.obtain(eventDownTime, eventTime += 16, action, x, y, 0);
   }

@@ -291,6 +291,18 @@ public class ScaleGestureRecognizerTests {
     assertThat(scaleGestureRecognizer.getVelocity()).isGreaterThan(0f);
   }
 
+  @Test(expected = NullPointerException.class)
+  public void crashesForNullElement() {
+    scaleGestureRecognizer.setElement(null);
+    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
+  @Test
+  public void allowsSettingElementAgain() {
+    scaleGestureRecognizer.setElement(new View(element.getContext()));
+    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
   private MotionEvent createMotionEvent(int action, float x, float y) {
     return MotionEvent.obtain(eventDownTime, eventTime += 16, action, x, y, 0);
   }

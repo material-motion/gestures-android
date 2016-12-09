@@ -238,6 +238,18 @@ public class DragGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, RECOGNIZED, POSSIBLE});
   }
 
+  @Test(expected = NullPointerException.class)
+  public void crashesForNullElement() {
+    dragGestureRecognizer.setElement(null);
+    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
+  @Test
+  public void allowsSettingElementAgain() {
+    dragGestureRecognizer.setElement(new View(element.getContext()));
+    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+  }
+
   private MotionEvent createMotionEvent(int action, float x, float y) {
     return MotionEvent.obtain(eventDownTime, eventTime += 16, action, x, y, 0);
   }
