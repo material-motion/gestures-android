@@ -38,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * To use an instance of this class, first set the element with {@link #setElement(View)} then
  * forward all touch events from the element's parent to {@link #onTouchEvent(MotionEvent)}.
  */
-public abstract class GestureRecognizer {
+public abstract class GestureRecognizer implements OnTouchListener {
 
   /**
    * A listener that receives {@link GestureRecognizer} events.
@@ -131,6 +131,14 @@ public abstract class GestureRecognizer {
   @GestureRecognizerState
   public int getState() {
     return state;
+  }
+
+  @Override
+  public boolean onTouch(View view, MotionEvent event) {
+    if (view != element) {
+      setElement(view);
+    }
+    return onTouchEvent(event);
   }
 
   /**
