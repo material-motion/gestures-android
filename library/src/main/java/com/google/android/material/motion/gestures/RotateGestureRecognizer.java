@@ -52,6 +52,8 @@ public class RotateGestureRecognizer extends GestureRecognizer {
 
     if (rotateSlop == UNSET_SLOP) {
       rotateSlop = (float) (Math.PI / 180);
+    }
+    if (angleVelocityTracker == null) {
       angleVelocityTracker = new ValueVelocityTracker(element.getContext(), ADDITIVE);
     }
   }
