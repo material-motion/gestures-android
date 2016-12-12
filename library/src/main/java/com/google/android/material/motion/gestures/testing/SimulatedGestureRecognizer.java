@@ -15,6 +15,7 @@
  */
 package com.google.android.material.motion.gestures.testing;
 
+import android.graphics.PointF;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -25,8 +26,25 @@ import com.google.android.material.motion.gestures.GestureRecognizer;
  */
 public class SimulatedGestureRecognizer extends GestureRecognizer {
 
+  private float untransformedCentroidX;
+  private float untransformedCentroidY;
+
   public SimulatedGestureRecognizer(View element) {
     setElement(element);
+  }
+
+  @Override
+  public void setState(@GestureRecognizerState int state) {
+    super.setState(state);
+  }
+
+  public void setCentroid(float x, float y) {
+    PointF centroid =
+      calculateUntransformedCentroid(MotionEvent.obtain(0, 0, MotionEvent.ACTION_MOVE, x, y, 0));
+    untransformedCentroidX = centroid.x;
+    untransformedCentroidY = centroid.y;
+
+    setState(CHANGED);
   }
 
   @Override
@@ -36,16 +54,11 @@ public class SimulatedGestureRecognizer extends GestureRecognizer {
 
   @Override
   public float getUntransformedCentroidX() {
-    return 0;
+    return untransformedCentroidX;
   }
 
   @Override
   public float getUntransformedCentroidY() {
-    return 0;
-  }
-
-  @Override
-  public void setState(@GestureRecognizerState int state) {
-    super.setState(state);
+    return untransformedCentroidY;
   }
 }
