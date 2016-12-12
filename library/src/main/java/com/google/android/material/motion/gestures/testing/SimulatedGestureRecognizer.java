@@ -48,7 +48,7 @@ public class SimulatedGestureRecognizer extends GestureRecognizer {
   }
 
   @Override
-  public boolean onTouchEvent(MotionEvent event) {
+  protected boolean onTouch(MotionEvent event) {
     return false;
   }
 

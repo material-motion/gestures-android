@@ -53,7 +53,6 @@ public class DragGestureRecognizerTests {
     Context context = Robolectric.setupActivity(Activity.class);
     element = new View(context);
     dragGestureRecognizer = new DragGestureRecognizer();
-    dragGestureRecognizer.setElement(element);
     dragGestureRecognizer.dragSlop = 0;
 
     eventDownTime = 0;
@@ -63,7 +62,7 @@ public class DragGestureRecognizerTests {
   @Test
   public void defaultState() {
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
-    assertThat(dragGestureRecognizer.getElement()).isEqualTo(element);
+    assertThat(dragGestureRecognizer.getElement()).isEqualTo(null);
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(0).of(0f);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(0).of(0f);
     assertThat(dragGestureRecognizer.getTranslationX()).isWithin(0).of(0f);
@@ -81,12 +80,12 @@ public class DragGestureRecognizerTests {
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move 1 pixel. Should not change the state.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 1, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 1, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
   }
@@ -100,17 +99,17 @@ public class DragGestureRecognizerTests {
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move 100 pixel right. Should change the state.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move 1 pixel. Should still change the state.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 101, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 101, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -124,17 +123,17 @@ public class DragGestureRecognizerTests {
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move 100 pixel right. Should change the state.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 0, 100));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 0, 100));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move 1 pixel. Should still change the state.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 0, 101));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 0, 101));
     assertThat(dragGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -143,9 +142,9 @@ public class DragGestureRecognizerTests {
   public void completedGestureIsRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     dragGestureRecognizer.addStateChangeListener(listener);
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 100, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 100, 0));
 
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -156,9 +155,9 @@ public class DragGestureRecognizerTests {
   public void cancelledGestureIsNotRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     dragGestureRecognizer.addStateChangeListener(listener);
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
 
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -171,8 +170,8 @@ public class DragGestureRecognizerTests {
 
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     dragGestureRecognizer.addStateChangeListener(listener);
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -183,7 +182,7 @@ public class DragGestureRecognizerTests {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     dragGestureRecognizer.addStateChangeListener(listener);
 
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
 
     assertThat(dragGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -195,14 +194,14 @@ public class DragGestureRecognizerTests {
     dragGestureRecognizer.addStateChangeListener(listener);
 
     // First finger down. Centroid is at finger location and translation is 0.
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
     assertThat(dragGestureRecognizer.getTranslationX()).isWithin(E).of(0);
     assertThat(dragGestureRecognizer.getTranslationY()).isWithin(E).of(0);
 
     // Second finger down. Centroid is in between fingers and translation is 0.
-    dragGestureRecognizer.onTouchEvent(
+    dragGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50);
@@ -212,7 +211,7 @@ public class DragGestureRecognizerTests {
     // Second finger moves [dx, dy]. Centroid and translation moves [dx/2, dy/2].
     float dx = 505;
     float dy = 507;
-    dragGestureRecognizer.onTouchEvent(
+    dragGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50 + dx / 2);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50 + dy / 2);
@@ -220,7 +219,7 @@ public class DragGestureRecognizerTests {
     assertThat(dragGestureRecognizer.getTranslationY()).isWithin(E).of(dy / 2);
 
     // Second finger up. Centroid is at first finger location and translation stays the same.
-    dragGestureRecognizer.onTouchEvent(
+    dragGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
@@ -228,7 +227,7 @@ public class DragGestureRecognizerTests {
     assertThat(dragGestureRecognizer.getTranslationY()).isWithin(E).of(dy / 2);
 
     // Finger up. Centroid is at first finger location and translation is reset.
-    dragGestureRecognizer.onTouchEvent(
+    dragGestureRecognizer.onTouch(element,
       createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
     assertThat(dragGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(dragGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
@@ -240,14 +239,13 @@ public class DragGestureRecognizerTests {
 
   @Test(expected = NullPointerException.class)
   public void crashesForNullElement() {
-    dragGestureRecognizer.setElement(null);
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(null, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   @Test
   public void allowsSettingElementAgain() {
-    dragGestureRecognizer.setElement(new View(element.getContext()));
-    dragGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    dragGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   private MotionEvent createMotionEvent(int action, float x, float y) {

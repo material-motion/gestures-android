@@ -42,6 +42,7 @@ public class ScaleGestureRecognizer extends GestureRecognizer {
   private float initialSpan;
   private float currentSpan;
 
+  @Nullable
   private ValueVelocityTracker spanVelocityTracker;
 
   @Override
@@ -61,7 +62,8 @@ public class ScaleGestureRecognizer extends GestureRecognizer {
     }
   }
 
-  public boolean onTouchEvent(MotionEvent event) {
+  @Override
+  protected boolean onTouch(MotionEvent event) {
     PointF centroid = calculateUntransformedCentroid(event);
     float centroidX = centroid.x;
     float centroidY = centroid.y;
@@ -161,7 +163,7 @@ public class ScaleGestureRecognizer extends GestureRecognizer {
    * @return The velocity in pixels per second.
    */
   public float getVelocity() {
-    return spanVelocityTracker.getCurrentVelocity();
+    return spanVelocityTracker != null ? spanVelocityTracker.getCurrentVelocity() : 0f;
   }
 
   @Override

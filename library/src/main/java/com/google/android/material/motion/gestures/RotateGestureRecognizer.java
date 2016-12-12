@@ -40,6 +40,7 @@ public class RotateGestureRecognizer extends GestureRecognizer {
   private float initialAngle;
   private float currentAngle;
 
+  @Nullable
   private ValueVelocityTracker angleVelocityTracker;
 
   @Override
@@ -58,7 +59,8 @@ public class RotateGestureRecognizer extends GestureRecognizer {
     }
   }
 
-  public boolean onTouchEvent(MotionEvent event) {
+  @Override
+  protected boolean onTouch(MotionEvent event) {
     PointF centroid = calculateUntransformedCentroid(event, 2);
     float centroidX = centroid.x;
     float centroidY = centroid.y;
@@ -158,7 +160,7 @@ public class RotateGestureRecognizer extends GestureRecognizer {
    * @return The velocity in radians per second.
    */
   public float getVelocity() {
-    return angleVelocityTracker.getCurrentVelocity();
+    return angleVelocityTracker != null ? angleVelocityTracker.getCurrentVelocity() : 0f;
   }
 
   @Override

@@ -54,10 +54,6 @@ public class MainActivity extends AppCompatActivity {
     scaleText = (TextView) findViewById(R.id.scale_text);
     rotateText = (TextView) findViewById(R.id.rotate_text);
 
-    dragGestureRecognizer.setElement(target);
-    scaleGestureRecognizer.setElement(target);
-    rotateGestureRecognizer.setElement(target);
-
     dragGestureRecognizer.addStateChangeListener(stateChangeListener);
     scaleGestureRecognizer.addStateChangeListener(stateChangeListener);
     rotateGestureRecognizer.addStateChangeListener(stateChangeListener);
@@ -69,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
       boolean handled = false;
-      handled |= dragGestureRecognizer.onTouchEvent(event);
-      handled |= scaleGestureRecognizer.onTouchEvent(event);
-      handled |= rotateGestureRecognizer.onTouchEvent(event);
+      handled |= dragGestureRecognizer.onTouch(v, event);
+      handled |= scaleGestureRecognizer.onTouch(v, event);
+      handled |= rotateGestureRecognizer.onTouch(v, event);
       return handled;
     }
   };

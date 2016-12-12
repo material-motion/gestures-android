@@ -35,16 +35,17 @@ import static com.google.common.truth.Truth.assertThat;
 public class SimulatedGestureRecognizerTests {
 
   private SimulatedGestureRecognizer gestureRecognizer;
+  private View element;
 
   @Before
   public void setUp() {
-    View element = new View(Robolectric.setupActivity(Activity.class));
+    element = new View(Robolectric.setupActivity(Activity.class));
     gestureRecognizer = new SimulatedGestureRecognizer(element);
   }
 
   @Test
   public void defaultState() {
-    assertThat(gestureRecognizer.onTouchEvent(null)).isFalse();
+    assertThat(gestureRecognizer.onTouch(element, null)).isFalse();
     assertThat(gestureRecognizer.getUntransformedCentroidX()).isWithin(0f).of(0f);
     assertThat(gestureRecognizer.getUntransformedCentroidY()).isWithin(0f).of(0f);
   }

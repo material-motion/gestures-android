@@ -40,7 +40,9 @@ public class DragGestureRecognizer extends GestureRecognizer {
   private float currentCentroidX;
   private float currentCentroidY;
 
+  @Nullable
   private ValueVelocityTracker centroidXVelocityTracker;
+  @Nullable
   private ValueVelocityTracker centroidYVelocityTracker;
 
   @Override
@@ -61,7 +63,8 @@ public class DragGestureRecognizer extends GestureRecognizer {
     }
   }
 
-  public boolean onTouchEvent(MotionEvent event) {
+  @Override
+  protected boolean onTouch(MotionEvent event) {
     PointF centroid = calculateUntransformedCentroid(event);
     float centroidX = centroid.x;
     float centroidY = centroid.y;
@@ -170,7 +173,7 @@ public class DragGestureRecognizer extends GestureRecognizer {
    * @return The velocity in pixels per second.
    */
   public float getVelocityX() {
-    return centroidXVelocityTracker.getCurrentVelocity();
+    return centroidXVelocityTracker != null ? centroidXVelocityTracker.getCurrentVelocity() : 0f;
   }
 
   /**
@@ -181,7 +184,7 @@ public class DragGestureRecognizer extends GestureRecognizer {
    * @return The velocity in pixels per second.
    */
   public float getVelocityY() {
-    return centroidYVelocityTracker.getCurrentVelocity();
+    return centroidYVelocityTracker != null ? centroidYVelocityTracker.getCurrentVelocity() : 0f;
   }
 
   @Override

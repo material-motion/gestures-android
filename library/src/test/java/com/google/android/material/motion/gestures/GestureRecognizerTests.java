@@ -16,9 +16,9 @@
 package com.google.android.material.motion.gestures;
 
 import android.app.Activity;
-import android.content.Context;
-import android.view.MotionEvent;
 import android.view.View;
+
+import com.google.android.material.motion.gestures.testing.SimulatedGestureRecognizer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,15 +36,12 @@ import static com.google.common.truth.Truth.assertThat;
 @Config(constants = BuildConfig.class, sdk = 21)
 public class GestureRecognizerTests {
 
-  private View element;
-  private GestureRecognizer gestureRecognizer;
+  private SimulatedGestureRecognizer gestureRecognizer;
 
   @Before
   public void setUp() {
-    Context context = Robolectric.setupActivity(Activity.class);
-    element = new View(context);
-    gestureRecognizer = new DragGestureRecognizer();
-    gestureRecognizer.setElement(element);
+    View element = new View(Robolectric.setupActivity(Activity.class));
+    gestureRecognizer = new SimulatedGestureRecognizer(element);
   }
 
   @Test
@@ -79,12 +76,5 @@ public class GestureRecognizerTests {
   @Test
   public void canSetNullElement() {
     gestureRecognizer.setElement(null);
-  }
-
-  @Test(expected = NullPointerException.class)
-  public void cannotPassEventsToNullElement() {
-    gestureRecognizer.setElement(null);
-    gestureRecognizer.onTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0));
-    gestureRecognizer.onTouchEvent(MotionEvent.obtain(0, 0, MotionEvent.ACTION_MOVE, 200, 200, 0));
   }
 }

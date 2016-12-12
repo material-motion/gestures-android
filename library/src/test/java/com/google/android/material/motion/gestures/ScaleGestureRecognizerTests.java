@@ -54,7 +54,6 @@ public class ScaleGestureRecognizerTests {
     Context context = Robolectric.setupActivity(Activity.class);
     element = new View(context);
     scaleGestureRecognizer = new ScaleGestureRecognizer();
-    scaleGestureRecognizer.setElement(element);
     scaleGestureRecognizer.scaleSlop = 0;
 
     eventDownTime = 0;
@@ -64,7 +63,7 @@ public class ScaleGestureRecognizerTests {
   @Test
   public void defaultState() {
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
-    assertThat(scaleGestureRecognizer.getElement()).isEqualTo(element);
+    assertThat(scaleGestureRecognizer.getElement()).isEqualTo(null);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidX()).isWithin(0).of(0f);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidY()).isWithin(0).of(0f);
     assertThat(scaleGestureRecognizer.getScale()).isWithin(0).of(1f);
@@ -81,17 +80,17 @@ public class ScaleGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger 1 pixel. Should not change the state.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 101, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 101, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
   }
@@ -106,22 +105,22 @@ public class ScaleGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger 100 pixel right. Should change the state.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move second finger 1 pixel. Should still change the state.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 201, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 201, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -136,22 +135,22 @@ public class ScaleGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger 100 pixel down. Should change the state.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 200));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 200));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move second finger 1 pixel. Should still change the state.
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 201));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 201));
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -160,13 +159,13 @@ public class ScaleGestureRecognizerTests {
   public void completedGestureIsRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 100, 200, 200));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100, 200, 200));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 2, 0, 0, 200, 100, 200, 200));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 200, 100));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 100, 200, 200));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100, 200, 200));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 2, 0, 0, 200, 100, 200, 200));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 200, 100));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -177,9 +176,9 @@ public class ScaleGestureRecognizerTests {
   public void cancelledOneFingerGestureIsNotRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
 
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -189,10 +188,10 @@ public class ScaleGestureRecognizerTests {
   public void cancelledTwoFingerGestureIsNotRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_CANCEL, 0, 0, 0, 200, 100));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_CANCEL, 0, 0, 0, 200, 100));
 
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -205,10 +204,10 @@ public class ScaleGestureRecognizerTests {
 
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -219,7 +218,7 @@ public class ScaleGestureRecognizerTests {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
 
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
 
     assertThat(scaleGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -230,10 +229,10 @@ public class ScaleGestureRecognizerTests {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     scaleGestureRecognizer.addStateChangeListener(listener);
 
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(scaleGestureRecognizer.getScale()).isWithin(E).of(1f);
 
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 100));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 100));
     assertThat(scaleGestureRecognizer.getScale()).isWithin(E).of(1f);
   }
 
@@ -243,13 +242,13 @@ public class ScaleGestureRecognizerTests {
     scaleGestureRecognizer.addStateChangeListener(listener);
 
     // First finger down. Centroid is at finger location and scale is 1.
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(scaleGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
     assertThat(scaleGestureRecognizer.getScale()).isWithin(E).of(1);
 
     // Second finger down. Centroid is in between fingers and scale is 1.
-    scaleGestureRecognizer.onTouchEvent(
+    scaleGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(scaleGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50);
@@ -258,7 +257,7 @@ public class ScaleGestureRecognizerTests {
     // Second finger moves [dx, dy]. Centroid moves [dx/2, dy/2], scale is calculated correctly.
     float dx = 505;
     float dy = 507;
-    scaleGestureRecognizer.onTouchEvent(
+    scaleGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(scaleGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50 + dx / 2);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50 + dy / 2);
@@ -266,7 +265,7 @@ public class ScaleGestureRecognizerTests {
       dist(0, 0, 100 + dx, 100 + dy) / dist(0, 0, 100, 100));
 
     // Second finger up. State is now reset.
-    scaleGestureRecognizer.onTouchEvent(
+    scaleGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(scaleGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(scaleGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
@@ -278,29 +277,28 @@ public class ScaleGestureRecognizerTests {
 
   @Test
   public void nonZeroVelocity() {
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 10, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 10, 0));
 
     float move = 0;
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10 + (move += 10), 0));
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10 + (move += 10), 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10 + (move += 10), 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10 + (move += 10), 0));
 
-    scaleGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 10 + move, 0));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    scaleGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 10 + move, 0));
+    scaleGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(scaleGestureRecognizer.getVelocity()).isGreaterThan(0f);
   }
 
   @Test(expected = NullPointerException.class)
   public void crashesForNullElement() {
-    scaleGestureRecognizer.setElement(null);
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(null, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   @Test
   public void allowsSettingElementAgain() {
-    scaleGestureRecognizer.setElement(new View(element.getContext()));
-    scaleGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    scaleGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   private MotionEvent createMotionEvent(int action, float x, float y) {

@@ -35,8 +35,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * the gesture recognizer and turned into gesture events. The output is often a linear
  * transformation of translation, rotation, and/or scale.
  * <p>
- * To use an instance of this class, first set the element with {@link #setElement(View)} then
- * forward all touch events from the element's parent to {@link #onTouchEvent(MotionEvent)}.
+ * To use an instance of this class, forward all touch events from the element's parent to {@link
+ * #onTouch(View, MotionEvent)}.
  */
 public abstract class GestureRecognizer implements OnTouchListener {
 
@@ -113,7 +113,11 @@ public abstract class GestureRecognizer implements OnTouchListener {
   /**
    * Sets the view that this gesture recognizer is attached to. This must be called before this
    * gesture recognizer can start {@link #onTouchEvent(MotionEvent) accepting touch events}.
+   *
+   * @deprecated in #develop#. Will be made protected in a future release. No longer necessary for
+   * clients to call this after {@link #onTouch(View, MotionEvent)}.
    */
+  @Deprecated
   public void setElement(@Nullable View element) {
     this.element = element;
   }
@@ -133,8 +137,11 @@ public abstract class GestureRecognizer implements OnTouchListener {
     return state;
   }
 
+  /**
+   * Forwards touch events from a {@link OnTouchListener} to this gesture recognizer.
+   */
   @Override
-  public boolean onTouch(View view, MotionEvent event) {
+  public final boolean onTouch(View view, MotionEvent event) {
     if (view != element) {
       setElement(view);
     }
@@ -142,9 +149,22 @@ public abstract class GestureRecognizer implements OnTouchListener {
   }
 
   /**
-   * Forwards touch events from a {@link OnTouchListener} to this gesture recognizer.
+   * Gesture recognizers should implement this to handle touch events.
    */
-  public abstract boolean onTouchEvent(MotionEvent event);
+  protected boolean onTouch(MotionEvent event) {
+    return false;
+  }
+
+  /**
+   * Forwards touch events from a {@link OnTouchListener} to this gesture recognizer.
+   *
+   * @deprecated in #develop#. Call {@link #onTouch(View, MotionEvent)} to forward touch events
+   * instead. GestureRecognizers should implement {@link #onTouch(MotionEvent)} instead.
+   */
+  @Deprecated
+  public boolean onTouchEvent(MotionEvent event) {
+    return onTouch(event);
+  }
 
   /**
    * Adds a listener to this gesture recognizer.

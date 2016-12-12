@@ -54,7 +54,6 @@ public class RotateGestureRecognizerTests {
     Context context = Robolectric.setupActivity(Activity.class);
     element = new View(context);
     rotateGestureRecognizer = new RotateGestureRecognizer();
-    rotateGestureRecognizer.setElement(element);
     rotateGestureRecognizer.rotateSlop = 0;
 
     eventDownTime = 0;
@@ -64,7 +63,7 @@ public class RotateGestureRecognizerTests {
   @Test
   public void defaultState() {
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
-    assertThat(rotateGestureRecognizer.getElement()).isEqualTo(element);
+    assertThat(rotateGestureRecognizer.getElement()).isEqualTo(null);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidX()).isWithin(0).of(0f);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidY()).isWithin(0).of(0f);
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(0).of(0f);
@@ -81,17 +80,17 @@ public class RotateGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger up less than 45 degrees. Should not change the state.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 99));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 99));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
   }
@@ -106,22 +105,22 @@ public class RotateGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger up more than 45 degrees. Should change the state.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 101));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 101));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move second finger 1 pixel. Should still change the state.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 102));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 102));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -136,22 +135,22 @@ public class RotateGestureRecognizerTests {
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // First finger down.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Second finger down.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
 
     // Move second finger down more than 45 degrees. Should change the state.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, -101));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, -101));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED});
 
     // Move second finger 1 pixel. Should still change the state.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, -102));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, -102));
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(CHANGED);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE, BEGAN, CHANGED, CHANGED});
   }
@@ -160,13 +159,13 @@ public class RotateGestureRecognizerTests {
   public void completedGestureIsRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 100, 200, 200));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100, 200, 200));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 2, 0, 0, 200, 100, 200, 200));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 200, 100));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 100, 200, 200));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100, 200, 200));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 2, 0, 0, 200, 100, 200, 200));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 200, 100));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -177,9 +176,9 @@ public class RotateGestureRecognizerTests {
   public void cancelledOneFingerGestureIsNotRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_CANCEL, 100, 0));
 
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -189,10 +188,10 @@ public class RotateGestureRecognizerTests {
   public void cancelledTwoFingerGestureIsNotRecognized() {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_CANCEL, 0, 0, 0, 200, 100));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 200, 100));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_CANCEL, 0, 0, 0, 200, 100));
 
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray())
@@ -205,10 +204,10 @@ public class RotateGestureRecognizerTests {
 
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -219,7 +218,7 @@ public class RotateGestureRecognizerTests {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
 
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_HOVER_MOVE, 0, 0));
 
     assertThat(rotateGestureRecognizer.getState()).isEqualTo(POSSIBLE);
     assertThat(listener.states.toArray()).isEqualTo(new Integer[]{POSSIBLE});
@@ -230,10 +229,10 @@ public class RotateGestureRecognizerTests {
     TrackingGestureStateChangeListener listener = new TrackingGestureStateChangeListener();
     rotateGestureRecognizer.addStateChangeListener(listener);
 
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0f);
 
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_MOVE, 100, 100));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_MOVE, 100, 100));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0f);
   }
 
@@ -243,13 +242,13 @@ public class RotateGestureRecognizerTests {
     rotateGestureRecognizer.addStateChangeListener(listener);
 
     // First finger down. Centroid is at finger location and rotation is 0.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Second finger down. Centroid is in between fingers and rotation is 1.
-    rotateGestureRecognizer.onTouchEvent(
+    rotateGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 100));
     assertThat(rotateGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50);
@@ -258,7 +257,7 @@ public class RotateGestureRecognizerTests {
     // Second finger moves [dx, dy]. Centroid moves [dx/2, dy/2], rotation is calculated correctly.
     float dx = 5;
     float dy = 507;
-    rotateGestureRecognizer.onTouchEvent(
+    rotateGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(rotateGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(50 + dx / 2);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(50 + dy / 2);
@@ -266,7 +265,7 @@ public class RotateGestureRecognizerTests {
       angle(0, 0, 100 + dx, 100 + dy) - angle(0, 0, 100, 100));
 
     // Second finger up. State is now reset.
-    rotateGestureRecognizer.onTouchEvent(
+    rotateGestureRecognizer.onTouch(element,
       createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100 + dx, 100 + dy));
     assertThat(rotateGestureRecognizer.getUntransformedCentroidX()).isWithin(E).of(0);
     assertThat(rotateGestureRecognizer.getUntransformedCentroidY()).isWithin(E).of(0);
@@ -279,19 +278,19 @@ public class RotateGestureRecognizerTests {
   @Test
   public void thirdFingerDoesNotAffectRotation() {
     // First finger.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Second finger on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Third finger also on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Move third finger.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 2, 0, 0, 100, 0, 200, 200));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 2, 0, 0, 100, 0, 200, 200));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
   }
 
@@ -301,74 +300,73 @@ public class RotateGestureRecognizerTests {
     rotateGestureRecognizer.addStateChangeListener(listener);
 
     // First finger down.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Second finger down on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Third finger also down on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Move second finger 45 degrees.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 100, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 100, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of((float) (Math.PI / 4));
 
     // First finger up. Rotation stays the same.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 0, 0, 0, 100, 100, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 0, 0, 0, 100, 100, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of((float) (Math.PI / 4));
   }
 
   @Test
   public void rotationIsStableOnSecondFingerUp() {
     // First finger down.
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Second finger down on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 100, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Third finger also down on horizontal line.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 2, 0, 0, 100, 0, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of(0);
 
     // Move second finger 45 degrees.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 100, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 100, 100, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of((float) (Math.PI / 4));
 
     // Second finger up. Rotation stays the same.
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100, 200, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 100, 100, 200, 0));
     assertThat(rotateGestureRecognizer.getRotation()).isWithin(E).of((float) (Math.PI / 4));
   }
 
   @Test
   public void nonZeroVelocity() {
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 10, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_DOWN, 1, 0, 0, 10, 0));
 
     float move = 0;
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10, 0 + (move += 10)));
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10, 0 + (move += 10)));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10, 0 + (move += 10)));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_MOVE, 1, 0, 0, 10, 0 + (move += 10)));
 
-    rotateGestureRecognizer.onTouchEvent(createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 10 + move, 0));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
+    rotateGestureRecognizer.onTouch(element, createMultiTouchMotionEvent(MotionEvent.ACTION_POINTER_UP, 1, 0, 0, 10 + move, 0));
+    rotateGestureRecognizer.onTouch(element, createMotionEvent(MotionEvent.ACTION_UP, 0, 0));
 
     assertThat(rotateGestureRecognizer.getVelocity()).isGreaterThan(0f);
   }
 
   @Test(expected = NullPointerException.class)
   public void crashesForNullElement() {
-    rotateGestureRecognizer.setElement(null);
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(null, createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   @Test
   public void allowsSettingElementAgain() {
-    rotateGestureRecognizer.setElement(new View(element.getContext()));
-    rotateGestureRecognizer.onTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
+    rotateGestureRecognizer.onTouch(new View(element.getContext()), createMotionEvent(MotionEvent.ACTION_DOWN, 0, 0));
   }
 
   private MotionEvent createMotionEvent(int action, float x, float y) {
