@@ -119,6 +119,10 @@ class ValueVelocityTracker {
    * Must be balanced with a previous call to {@link #onGestureStart(MotionEvent, float)}.
    */
   public void onGestureEnd(MotionEvent event, float value) {
+    if (velocityTracker == null) {
+      return;
+    }
+
     addValueMovement(event, value);
 
     velocityTracker.computeCurrentVelocity(PIXELS_PER_SECOND, maximumFlingVelocity);
@@ -129,6 +133,10 @@ class ValueVelocityTracker {
   }
 
   private void addValueMovement(MotionEvent event, float value) {
+    if (velocityTracker == null) {
+      return;
+    }
+
     int valueMovementAction;
 
     int action = MotionEventCompat.getActionMasked(event);
